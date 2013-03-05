@@ -11,8 +11,7 @@ Assumptions:
     The user is born at or after 1900.
     Leap year is non-existent.
 '''
-import os, datetime, sys
-from calendar import month
+import datetime, sys
 
 ##########CONSTANTS#############################################################
 MONTH_DICT = {'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3, 'APRIL': 4, 'MAY': 5,
@@ -22,7 +21,7 @@ MONTH_DICT = {'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3, 'APRIL': 4, 'MAY': 5,
 DAY_DICT = {1: 31, 2: 29, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30,
             10: 31, 11: 30, 12: 31}
 
-DEBUG = True
+DEBUG = False
 
 # ATTN GRADER: EXTRA CREDIT WAS ATTEMPTED
 
@@ -93,7 +92,7 @@ def cvalidate(vtype, comparator, comparatee=None):
     elif vtype == 'float':
         # if it can't be turned into a float, it isn't a word. . .
         try:
-            temp = float(comparator)
+            temp = float(comparator) #@UnusedVariable
         except ValueError:
             return False
         # and if it can't be turned into an int, then it is a float.
@@ -167,6 +166,9 @@ def main():
     currentMonth = datetime.date.timetuple(datetime.date.today())[1]
     currentDay = datetime.date.timetuple(datetime.date.today())[2]
     inputMessage = ''
+    chinese = ''
+    western = ''
+    yearTemp = 0
 
     inputMessage = "\nPlease enter a birth year between the years 1900 and "
     inputMessage = inputMessage + '{0}: \n'.format(currentYear)
@@ -232,5 +234,115 @@ def main():
         sys.exit(UserWarning)
     usrDay = getInput
 
+    #######Beginning Massive if-else testing for WESTERN############
     debug(DEBUG, (usrYear, usrMonth, usrDay))
+
+    if usrMonth == 1:
+        if usrDay >=21:
+            western = 'Aquarius'
+        else:
+            western = 'Capricorn'
+    elif usrMonth == 2:
+        if usrDay >= 20:
+            western = 'Pisces'
+        else:
+            western = 'Aquarius'
+    elif usrMonth == 3:
+        if usrDay >= 21:
+            western = 'Aries'
+        else:
+            western = 'Pisces'
+    elif usrMonth == 4:
+        if usrDay >= 21:
+            western = 'Taurus'
+        else:
+            western = 'Aries'
+    elif usrMonth == 5:
+        if usrDay >= 22:
+            western = 'Gemini'
+        else:
+            western = 'Taurus'
+    elif usrMonth == 6:
+        if usrDay >= 22:
+            western = 'Cancer'
+        else:
+            western = 'Gemini'    
+    elif usrMonth == 7:
+        if usrDay >= 23:
+            western = 'Leo'
+        else:
+            western = 'Cancer'
+    elif usrMonth == 8:
+        if usrDay >= 23:
+            western = 'Virgo'
+        else:
+            western = 'Leo'
+    elif usrMonth == 9:
+        if usrDay >= 24:
+            western = 'Libra'
+        else:
+            western = 'Virgo'
+    elif usrMonth == 10:
+        if usrDay >= 24:
+            western = 'Scorpio'
+        else:
+            western = 'Libra'
+    elif usrMonth == 11:
+        if usrDay >= 23:
+            western = 'Sagittarius'
+        else:
+            western = 'Scorpio'
+    elif usrMonth == 12:
+        if usrDay >= 22:
+            western = 'Capricorn'
+        else:
+            western = 'Sagittarius'
+                    
+    debug(DEBUG, western)
+    
+    #######Beginning Massive if-else testing for EASTERN############
+
+    # if user is born in january, then make a fake birthyear to move
+    # the year back one animal.
+    if usrMonth == 1:
+        yearTemp = usrYear - 1
+        debug(DEBUG, (usrYear, yearTemp))
+    else:
+        yearTemp = usrYear
+    debug(DEBUG, yearTemp)
+    # the remainder will determine which sign you're a part of
+    yearTemp = yearTemp % 12
+    debug(DEBUG, yearTemp)
+    
+    # we start with 4, because 1900%12 = 4
+    if yearTemp == 4:
+        chinese = 'Rat'
+    elif yearTemp == 5:
+        chinese = 'Ox'
+    elif yearTemp == 6:
+        chinese = 'Tiger'
+    elif yearTemp == 7:
+        chinese = 'Rabbit'
+    elif yearTemp == 8:
+        chinese = 'Dragon'
+    elif yearTemp == 9:
+        chinese = 'Snake'
+    elif yearTemp == 10:
+        chinese = 'Horse'
+    elif yearTemp == 11:
+        chinese = 'Sheep'
+    elif yearTemp == 0:
+        chinese = 'Monkey'
+    elif yearTemp == 1:
+        chinese = 'Rooster'
+    elif yearTemp == 2:
+        chinese = 'Dog'
+    elif yearTemp == 3:
+        chinese = 'Pig'
+        
+    debug(DEBUG, chinese)
+    
+    print 'Given the birthdate: {0}:{1}:{2}'.format(usrYear, usrMonth, usrDay)
+    print 'Your Western Zodiac is: %s' % western
+    print 'And your Eastern Zodiac is: %s' % chinese    
 main()
