@@ -152,6 +152,7 @@ def cvalidate(vtype, comparator, comparatee=None):
 
 def main():
 
+    # #GREETING##
     print "Homework #4 of Lupoli's CMSC201 class. This takes in a user's "
     print "birth date info and uses it to find the user's chinese and zodiac"
     print "signs. from the year 1900 to current. Please follow all instructions"
