@@ -1,0 +1,10 @@
+Shakespeare$William$Romeo And Juliet$5$5.99 
+Shakespeare$William$Macbeth$3$7.99 
+Dickens$Charles$Hard Times$7$27.00 
+Austin$Jane$Sense And Sensibility$2$4.95 
+Austin$Jane$Emma$3$5.95 
+Hawthrone$Nathaniel$The Scarlet Letter$6$18.00 
+Shakespeare$William$Hamlet$10$6.99 
+Chaucer$Geoffrey$The Canterbury Tales$4$20.00 
+Dickens$Charles$Great Expectations$2$25.00
+Dickens$Charles$David Copperfield$4$26.00 
