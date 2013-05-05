@@ -1,23 +1,27 @@
 '''
-File:        hw5.py
+File:        hw6.py
 Author:      Eliot Carney-Seim
-Date:        Mar 10, 2013 11:38:59 PM
+Date:        Mar 22, 2013 11:38:59 PM
 Section:     10
 Email:       eliot2@umbc.edu
-Description: This program will take present the user with a menu of 4 things:
-to quit, or to convert a given decimal to either binary or hexadecimal, or to 
-convert an 8 bit binary code to decimal.
-
-Assumptions: 
-
+Description: This program is a game where the goal is to move your piece across
+a 10x10 board, N, E, W, or S, until it as at the goal location. 
 '''
-# CONSTANTS
-DEBUG = True
 
+DEBUG = False
+MAX_LEN = 9
+MIN_LEN = 0
 
-
-
-
+# CLASSES
+# this class is a simple containter object to keep some variables organized.
+class startPos(object):
+    
+    def __init__(self):
+        self.pX = 2
+        self.pY = 4
+        self.kX = 3
+        self.kY = 6
+        
 
 # FUNCTIONS
 '''                                                                                                                                                                     
@@ -39,12 +43,7 @@ def debug(debugBool, info):
         print "\nDEBUG INFO: ", info
         return True
     return False
-
-
-
-
-
-
+pass
 
 
 '''                                                                                                                                                                     
@@ -62,18 +61,26 @@ def debug(debugBool, info):
 $ If comparatee:  True or False                                                                                                                                         
 '''
 def cvalidate(vtype, comparator, comparatee=None):
+    '''
+    # This function takes the given type, and the wanted type, both as a string
+    # and an option 3rd input. This function is intended for use with raw_input 
+    # is used for any type. If the type matches, it will return the string
+    # converted to the type, otherwise False. (can be used simply for convert).
+    # for strings, the 3rd input MAY be a string/list to compare to.
+    # for number types, the 3rd comparatee MAY be a list of range
+    # if the 3rd option is used, it will always return a boolean.
+    '''
+    
     valid = False
     if vtype == 'str':
         if comparatee is not None:
             if comparator in comparatee:
                 return True
             else:
-                print "Please enter a Valid string."
                 return False
         elif type(comparator) is str:
             return comparator
         else:
-            print "Please enter a Valid string."
             return False
     elif vtype == 'int':
         # make sure the user gave us an int, if true, change comp. to an int
@@ -88,12 +95,10 @@ def cvalidate(vtype, comparator, comparatee=None):
             if  rList[0] <= comparator <= rList[1]:
                 return True
             else:
-                print "Please enter a Valid integer."
                 return False
         if type(comparator) is int:
             return comparator
         else:
-            print "Please enter a Valid integer."
             return False
     elif vtype == 'long':
         # make sure the user gave us an int, if true, change comp. to an int
@@ -116,13 +121,11 @@ def cvalidate(vtype, comparator, comparatee=None):
         try:
             temp = float(comparator)  # @UnusedVariable
         except ValueError:
-            print "Please enter a Valid float."
             return False
         # and if it can't be turned into an int, then it is a float.
         # and we are looking for a float, so we WANT this to throw an exception
         try:
             comparator = int(comparator)
-            print "Please enter a Valid float."
             return False
         except ValueError:
             valid = True
@@ -133,12 +136,10 @@ def cvalidate(vtype, comparator, comparatee=None):
             if  rList[0] <= comparator <= rList[1]:
                 return True
             else:
-                print "Please enter a Valid float."
                 return False
         if type(comparator) is float:
             return comparator
         else:
-            print "Please enter a Valid string."
             return False
     elif vtype == 'list':
         if type(comparator) is list:
@@ -148,12 +149,10 @@ def cvalidate(vtype, comparator, comparatee=None):
             if comparator == comparatee:
                 return True
             else:
-                print "Please enter a Valid list."
                 return False
         elif type(comparator) is list:
             return comparator
         else:
-            print "Please enter a Valid list."
             return False
     elif vtype == 'bool':
         # this only takes a True or False
@@ -164,12 +163,10 @@ def cvalidate(vtype, comparator, comparatee=None):
             if comparator == comparatee:
                 return True
             else:
-                print "Please enter a Valid boolean."
                 return False
         elif type(comparator) is bool:
             return comparator
         else:
-            print "Please enter a Valid boolean."
             return False
     elif comparator == 'Quit...':
         # returning something that isn't False, if in a while loop
@@ -181,81 +178,159 @@ def cvalidate(vtype, comparator, comparatee=None):
 def printGreeting():
 
     print "Hello User, please follow all instructions! The program does the\n" \
-    " following: This program will take present the user with a menu of\n" \
-    " 4 things: to quit, or to convert a given decimal to either binary or\n" \
-    " hexadecimal, or to convert an 8 bit binary code to decimal."
+    " following: This program will generate a game for the player. Move "\
+    " according to the cardinal directions, and get to the key to win, you may"\
+    " not move on the border."
 
-def decToHex(decimal):
-    print None
+'''                                                                                                                                                                     
+# Name: Eliot Carney-Seim                                                                                                                                               
+# Description:
+# takes the player's new XY position and return True if they are now on the 
+# border and False if they are not. 
+# Inputs:
+# pX - the horizontal grid location
+# pY - the vertical grid location
+# Outputs: n/a
+# Returns:
+# True if either input is equal to 9 or 0, else False is returned.
+'''
+def offBoard(pX, pY):
+    if pX == MAX_LEN or pX == MIN_LEN:
+        return True
+    elif pY == MAX_LEN or pY ==MIN_LEN:
+        return True
+    return False
 
-def decToBin(decimal):
-    binary = ''
-    decimal = int(decimal)
-    for power in range(7, -1, -1):
-        if decimal / (2 ** power) != 0:
-            decimal -= 2 ** power
-            binary = binary + '1'
-        else:
-            binary = binary + '0'
-    return binary
+'''                                                                                                                                                                     
+# Name: Eliot Carney-Seim                                                                                                                                               
+# Description:
+# takes the direction the user entered, the original player's X and Y, and 
+# returns the updated player's X and Y.
+# Inputs:
+# playerX - the horizontal grid location
+# playerY - the vertical grid location
+# direction - string of the given cardinal direction
+# Outputs: n/a
+# Returns:
+# playerX - the horizontal grid location
+# playerY - the vertical grid location
+# changed playerX and playerY based on direction
+'''
+def updatePosition(direction, playerX, playerY):
+    OrigPos = (playerX, playerY)
+    # north and south are inverted, due to how comp grids work
+    if direction == 'north':
+        playerY -= 1
+    elif direction == 'south':
+        playerY += 1
+    elif direction == 'west':
+        playerX -= 1
+    elif direction == 'east':
+        playerX += 1
+    else:
+        debug(DEBUG, ('NO DIRECTION /WRONG: ', direction))
+    # if the move is on the boarder, return the unchanged, past location
+    if offBoard(playerX, playerY):
+        print "Sorry, you can't move onto the boarder."
+        return OrigPos
+    return (playerX, playerY)
+'''                                                                                                                                                                     
+# Name: Eliot Carney-Seim                                                                                                                                               
+# Description:                                                                                                                                                          
+# returns True if the player reached the key and False if not.                                                                                               
+# Inputs:                                                                                                                                                               
+# playerX - the horizontal grid location
+# playerY - the vertical grid location
+# keyX - the horizontal grid location for the KEY
+# keyY - the vertical grid location for the KEY                                                                       
+# Outputs: n/a
+# Returns:
+# A boolean, for if KeyX and KeyY are equal to PlayerX and PlayerY.
+'''
+def reachedKey(playerX, playerY, keyX, keyY):
+    if playerX == keyX and playerY == keyY:
+        return True
+    return False
+'''
+# Name: Eliot Carney-Seim
+# Description:
+# prints out the grid after formatting it correctly
+# Inputs: 
+# playerX - the horizontal grid location
+# playerY - the vertical grid location
+# keyX - the horizontal grid location for the KEY
+# keyY - the vertical grid location for the KEY
+# Outputs:
+# prints out the formatted grid
+# Returns: n/a
+'''
+def printBoard(playerX, playerY, keyX, keyY):
+    # recreate a basic keyboard each calling
+    gameboard = [['_','_','_','_','_','_','_','_','_','_\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['|','.','.','.','.','.','.','.','.','|\n'],\
+                 ['_','_','_','_','_','_','_','_','_','_\n']]
+    # the x and Y have to be swapped to format with the list
+    tempLocPlayer = (playerY, playerX)
+    tempLocKey = (keyY, keyX)
+    
+    # grab the row from which the player resides
+    #tempStr = gameboard[tempLocPlayer[0]]
+    gameboard[tempLocKey[0]][tempLocKey[1]] = 'K'    
+    gameboard[tempLocPlayer[0]][tempLocPlayer[1]] = 'P'
+    for i in range(len(gameboard)):
+        for j in gameboard[i]:
+            print j,
 
-def binToDec(binary):
-    decimal = 0
-    loc = 0
-    # we increment down from 7 to 0, while we move up the string from 0 to 7
-    for power in range(7, -1, -1):
-        if binary[loc] != 0:
-            decimal += (2 ** power)
-        loc += 1
-    return decimal
 
-def getInput(menu, choicesList):
-    gotInputBool = False
-    # function to get the menu choice
-    while gotInputBool == False:
-       choice = raw_input(menu)
-       choice = choice.upper()
-       # this function will return false if not in the choicesList, else True.
-       gotInputBool = cvalidate('str', choice, choicesList)
-       debug(DEBUG, gotInputBool)
-    return choice
+'''
+# Name: Eliot Carney-Seim
+# Description:
+# will keep asking until user gives us input equal to something in allValids
+# Inputs: User enters playerInput, to be tested for validity
+# Outputs: Asks for user input
+# Returns: 
+# playerInput - a valid input       
+'''
+def getInput():
+
+    # sent to the validating function, will return false if has not validInput    
+    allValids = ('west', 'north', 'south', 'east')
+    playerInput = ''
+    validInput = False
+    while not(validInput):
+        playerInput  = raw_input('Please type in North, South, East, or West')
+        playerInput = playerInput.lower()
+        validInput  = cvalidate('str', playerInput, allValids)
+        if not(validInput):
+            print 'Please enter either: "North", "South", "East", or "West"'
+        debug(DEBUG, validInput)
+    return playerInput
 
 def main():
-
-    decimal = 0
-    choice = ''
-    input = ''
-    numInputBool = False
-    choicesList = ['A', 'B', 'C', 'D']
-    menu = "\t[A] - Convert from Decimal to Binary\n"\
-           "\t[B] - Convert from Decimal to Hexadecimal\n"\
-           "\t[C] - Convert from Binary to Decimal\n"\
-           "\t[D] - quit\n"\
-           "What's your choice? "
-    ask = "\nEnter the number: "
-    results = "\nYour conversion is: "
-
+    
+    
+    # this class is just an container for easily organizing specific code
+    game = startPos()
     printGreeting()
-
-    while choice != 'D':
-        # simple function to make sure the give choice is valid.
-        choice = getInput(menu, choicesList)
-        if choice == 'A':
-            while numInputBool == False:
-                # keep asking for a decimal till the user puts one in.
-                decimal = raw_input(ask)
-                # will return a bool if int AND between or equal to 0 and 255.
-                numInputBool = cvalidate('int', decimal, (0, 255))
-            print results + str(decToBin(decimal)) + '\n'
-
-
-
-
-
-
-
-
-
-
+    
+    # set the player and key starting positions
+    playerPos = (game.pX, game.pY)
+    keyPos = (game.kX, game.kY)
+    printBoard(playerPos[0], playerPos[1], keyPos[0], keyPos[1])
+    while not(reachedKey(playerPos[0], playerPos[1], keyPos[0], keyPos[1])):
+        # get the direction that we want from the player.
+        playerInput = getInput()
+        playerPos = updatePosition(playerInput, playerPos[0], playerPos[1])
+        debug(DEBUG, playerPos)
+        printBoard(playerPos[0], playerPos[1], keyPos[0], keyPos[1])
+    print "YOU FOUND THE KEY!!"
 
 main()
+    
