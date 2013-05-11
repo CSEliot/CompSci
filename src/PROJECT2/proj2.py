@@ -272,7 +272,7 @@ def main():
     
     myStack = Stack()
     
-    debug(DEBUG, myStack    )
+    debug(DEBUG, myStack)
 
     
 
