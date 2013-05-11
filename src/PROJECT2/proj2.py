@@ -190,19 +190,33 @@ def inputTest(expression):
     parenthesis = 0 # used to keep track of left and right end parenthesis.
     prevChar = '' # used to make sure we don't get a - or _ before a #
     
+    
+    # so, formatting has to be done. spaces are allowed everywhere, only one
+    # symbol between each number. if there IS, the second symbol is equal to 
+    # saying "# is positive or negative". 
+    # this should break: "()4+5()" for 2 reasons, empty parenthesis AND 
+    # #s outside of a parenthesis.
+    
     for letter in expression:
+        # skip past blanks.
+        if letter is not ' ':
             if not letter in validSymbols:
                     if not letter.isdigit():
+                            print "Sorry, this program cannot work with this "+\
+                                  "input."
                             return False
                     else: 
                         # it's a number, which is fine.
-                        # So test to see if the character before was a 
                         pass
             else:
-                # if it's valid, we should still test for 
+                # if it's valid, we should still test for order!!
                 # - or + in front of numbers.
                 # and parenthesis balance must match, so we 
                 # account for that too.
+# each set must have 2 numbers, and an operator. if there is no  
+# number, then there must be a set there. So we should first make'
+# sure that there is a balanced number of parenthesis, then that inside every
+# set is an operator + a set/number pair. 
                 if letter is "(" or ")":
                     if letter is '(':
                         parenthesis += 1
@@ -211,6 +225,8 @@ def inputTest(expression):
                         # if the parenthesis count goes below 0
                         # that means the () was input wrong.
                         if parenthesis < 0:
+                            print "Please write a fully parenthesized"+\
+                            " expression"
                             return False
                 prevChar = letter
                         
@@ -258,8 +274,7 @@ def main():
     
     debug(DEBUG, myStack    )
 
-    stre = ''
-    stre.isdig
+    
 
 if __name__ == '__main__':
     main()
