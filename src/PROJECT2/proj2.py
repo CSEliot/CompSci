@@ -175,8 +175,23 @@ def getInput():
     
     while not validInput:
         expression = raw_input('Please enter the expression: ')
-        expressionList = expression
+        # if wordTest passes True, turn validInput to True.
+        if not(wordTest(expression)):
+            validInput = True
+        else:
+            validInput = False
         
+        
+def allTests(expression):
+    validInput = False #actual changing and testing variable.
+    valid = True # a variable to increase readability.
+    invalid = False # legibility variable
+    
+    if wordTest(expression) is not valid:
+        return False
+    if plusTest(expression) is not valid:
+        return False
+    
 '''                                                                                                                                                                     
 # Name: Eliot Carney-Seim                                                                                                                                               
 # Description:
@@ -184,8 +199,10 @@ def getInput():
 # Inputs: expression - the string to test
 # Returns: boolean, based on if there are any invalid characters in the list.                                                                                                                                                              
 '''
-def inputTest(expression):
+def wordTest(expression):
     
+    invalid = False # legibility variable
+    valid = True # legibility variable
     validSymbols = ['(', ')', '/', '+', '-', '*'] # for testing, excluding #s
     parenthesis = 0 # used to keep track of left and right end parenthesis.
     prevChar = '' # used to make sure we don't get a - or _ before a #
@@ -197,38 +214,54 @@ def inputTest(expression):
     # this should break: "()4+5()" for 2 reasons, empty parenthesis AND 
     # #s outside of a parenthesis.
     
-    for letter in expression:
+    for char in expression:
         # skip past blanks.
-        if letter is not ' ':
-            if not letter in validSymbols:
-                    if not letter.isdigit():
+        if char is not ' ':
+            if not char in validSymbols:
+                    if not char.isdigit():
                             print "Sorry, this program cannot work with this "+\
                                   "input."
-                            return False
+                            return invalid
                     else: 
                         # it's a number, which is fine.
                         pass
             else:
-                # if it's valid, we should still test for order!!
-                # - or + in front of numbers.
-                # and parenthesis balance must match, so we 
-                # account for that too.
-# each set must have 2 numbers, and an operator. if there is no  
-# number, then there must be a set there. So we should first make'
-# sure that there is a balanced number of parenthesis, then that inside every
-# set is an operator + a set/number pair. 
-                if letter is "(" or ")":
-                    if letter is '(':
-                        parenthesis += 1
-                    if letter is ')':
-                        parenthesis -= 1
-                        # if the parenthesis count goes below 0
-                        # that means the () was input wrong.
-                        if parenthesis < 0:
-                            print "Please write a fully parenthesized"+\
-                            " expression"
-                            return False
-                prevChar = letter
+                #it is a char in the validSymbols list, so we say it's fine.
+                pass
+    # if everything passes, the expression loop is over and we return True.
+    return valid
+
+def plusTest(expression):
+    
+    invalid = False # legibility variable
+    valid = True # legibility variable
+    
+    for i in range(len(expression)):
+        if expression[i] is '+':
+            # if we find a plus, we keep going back till we find a non-space
+            # character. Once we do, we see if it is a +, a number, or a ().
+            # if it's a number, that means that out + is an operator, otherwise,
+            # it's a modifier.
+    
+    
+    
+    
+# # each set must have 2 numbers, and an operator. if there is no  
+# # number, then there must be a set there. So we should first make'
+# # sure that there is a balanced number of parenthesis, then that inside every
+# # set is an operator + a set/number pair. 
+#                 if char is "(" or ")":
+#                     if char is '(':
+#                         parenthesis += 1
+#                     if char is ')':
+#                         parenthesis -= 1
+#                         # if the parenthesis count goes below 0
+#                         # that means the () was input wrong.
+#                         if parenthesis < 0:
+#                             print "Please write a fully parenthesized"+\
+#                             " expression"
+#                             return False
+#                 prevChar = char
                         
     
     
