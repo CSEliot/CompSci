@@ -172,25 +172,57 @@ def getInput():
     expression = '' # user given parenthesized expression, checked for validity.
     
     
-    
     while not validInput:
-        expression = raw_input('Please enter the expression: ')
-        # if wordTest passes True, turn validInput to True.
-        if not(wordTest(expression)):
-            validInput = True
-        else:
-            validInput = False
+        expression = raw_input('\nPlease enter the expression: ')
+
+        # used later for when testing if there is only space between 2 numbers.        
+        origExpression = expression.split()
+        prevChar = ''
         
+        # a simple set of actions to remove ALL whitespace from expression:
+        emptyStr = ''
+        expList = expression.split()
+        #.join will iterate through the expList, and for each character, 'append'
+        # it to the list, with a seperator being Null, or emptyStr.
+        expression = emptyStr.join(iter(expList))
+        debug(DEBUG, expression)
+        
+        
+        # if wordTest passes True, turn validInput to True.
+        if allTests(expression) is not False:
+            validInput = True
+
+        
+        # a quick pre-check to make sure no numbers are entered w/ space between
+        for char in origExpression:
+            if char.isdigit():
+                if char.isdigit() and prevChar.isdigit():
+                    validInput = False
+                    print "Sorry, this program cannot work with this input."
+                    debug(DEBUG, 'STOPPED IN origEXPRESSION test')
+                else:
+                    prevChar = char
+    debug(DEBUG, "ALL VALID, KEEP TESTING")
+    debug(DEBUG, ('ANSWER: ', eval(expression)))
+    return expression
         
 def allTests(expression):
-    validInput = False #actual changing and testing variable.
     valid = True # a variable to increase readability.
-    invalid = False # legibility variable
-    
+
     if wordTest(expression) is not valid:
         return False
+    debug(DEBUG, "wordTest passed")
     if plusTest(expression) is not valid:
         return False
+    debug(DEBUG, "plusTest passed")
+    if minusTest(expression) is not valid:
+        return False
+    debug(DEBUG, "minusTest passed")
+    if parenthTest(expression) is not valid:
+        return False
+    debug(DEBUG, "parenthTest passed")
+    # if we get to this point, all tests passed, so return valid!
+    return valid
     
 '''                                                                                                                                                                     
 # Name: Eliot Carney-Seim                                                                                                                                               
@@ -204,66 +236,173 @@ def wordTest(expression):
     invalid = False # legibility variable
     valid = True # legibility variable
     validSymbols = ['(', ')', '/', '+', '-', '*'] # for testing, excluding #s
-    parenthesis = 0 # used to keep track of left and right end parenthesis.
-    prevChar = '' # used to make sure we don't get a - or _ before a #
     
+    # ** is a special case, it's validsymbols but invalid operation
+    # so we have to test for it individually
+    if '**' in expression:
+        print "Sorry, this program cannot work with this "+\
+              "input."
+        return invalid
     
-    # so, formatting has to be done. spaces are allowed everywhere, only one
-    # symbol between each number. if there IS, the second symbol is equal to 
-    # saying "# is positive or negative". 
-    # this should break: "()4+5()" for 2 reasons, empty parenthesis AND 
-    # #s outside of a parenthesis.
-    
+    # go through the whole expression, WEAVE for errors.
     for char in expression:
-        # skip past blanks.
-        if char is not ' ':
-            if not char in validSymbols:
-                    if not char.isdigit():
-                            print "Sorry, this program cannot work with this "+\
-                                  "input."
-                            return invalid
-                    else: 
-                        # it's a number, which is fine.
-                        pass
-            else:
-                #it is a char in the validSymbols list, so we say it's fine.
-                pass
+        if not char in validSymbols:
+                if not char.isdigit():
+                        print "Sorry, this program cannot work with this "+\
+                              "input."
+                        return invalid
+                else: 
+                    # it's a number, which is fine.
+                    pass
+        else:
+            #it is a char in the validSymbols list, so we say it's fine.
+            pass
     # if everything passes, the expression loop is over and we return True.
     return valid
 
 def plusTest(expression):
     
+    i=0
+    prePos = i-1 #test to see if previous char is a plus
+    prePrePos = prePos - 1 # test to see if next previous char is a plus
     invalid = False # legibility variable
     valid = True # legibility variable
-    
+    operations = ['+', '-', '*', '/']
+
+# if an equation is parenthesized correctly, then pos -1 will never be <0
+
     for i in range(len(expression)):
-        if expression[i] is '+':
-            # if we find a plus, we keep going back till we find a non-space
-            # character. Once we do, we see if it is a +, a number, or a ().
-            # if it's a number, that means that out + is an operator, otherwise,
-            # it's a modifier.
+        if expression[i].isdigit():
+            prePos = i-1
+            debug(DEBUG, ('prePos: ', expression[prePos]))
+            if expression[prePos] is '+':
+                prePrePos = prePos - 1
+                # check again to make sure it isn't negative.
+                if prePrePos >= 0:
+                    debug(DEBUG, ('prePos: ', expression[prePrePos]))
+                    if expression[prePrePos] in operations:
+                        # basically if a plus then operation come before
+                        # a number, then SEND FALSE.
+                        print "Please don't use + for positive numbers"
+                        return invalid
+                else:
+                    # if prePrePos DOES go into the negatives, that means we
+                    # it probably looks like "+x...", which is still in front.
+                    print "Please don't use + for positive numbers"
+                    return invalid                    
+    return valid
+
+def minusTest(expression):
     
+    i=0
+    prePos = i-1 #test to see if previous char is a plus
+    prePrePos = prePos - 1 # test to see if next previous char is a plus
+    invalid = False # legibility variable
+    valid = True # legibility variable
+    operations = ['+', '-', '*', '/']
+
+    for i in range(len(expression)):
+        if expression[i].isdigit():
+            prePos = i-1
+            debug(DEBUG, ('prePos: ', expression[prePos]))
+            if expression[prePos] is '-':
+                prePrePos = prePos - 1
+                # check again to make sure it isn't negative.
+                if prePrePos >= 0:
+                    if expression[prePrePos] in operations:
+                        # basically if a plus then operation come before
+                        # a number, then SEND FALSE.
+                        print "Please avoid using negative numbers"
+                        return invalid
+                else:
+                    # if prePrePos DOES go into the negatives, that means we
+                    # it probably looks like "+x...", which is still in front.
+                    print "Please avoid using negative numbers"
+                    return invalid                    
+    return valid                    
     
+def parenthTest(expression):
     
+    # call numSeperator to get a proper list of everything
+    # then call evaluator, which will use a stack. 
+    # and between each parenth. evaluation, it'll call parenthTest to make
+    # it's still valid.
+    # example: 
+# ((3+2)+4) will be sent. it'll take the first parenth. and then the second one
+# it sees it will put THAT, then the next num, the next operator, then the 
+# next number, and IF the next thing is NOT a right parenthesis, it'll return 
+# false. Otherwise, it'll have the '(' location and the ')' location, remove 
+# them and everything in between and replace it with the answer from eval.
+# then we have (5+4) and do this all over again. If the changed string is 
+# just a single number, then we stop and return the number.
     
-# # each set must have 2 numbers, and an operator. if there is no  
-# # number, then there must be a set there. So we should first make'
-# # sure that there is a balanced number of parenthesis, then that inside every
-# # set is an operator + a set/number pair. 
-#                 if char is "(" or ")":
-#                     if char is '(':
-#                         parenthesis += 1
-#                     if char is ')':
-#                         parenthesis -= 1
-#                         # if the parenthesis count goes below 0
-#                         # that means the () was input wrong.
-#                         if parenthesis < 0:
-#                             print "Please write a fully parenthesized"+\
-#                             " expression"
-#                             return False
-#                 prevChar = char
+    valid = True # legibity variable
+    invalid = False # legibility variable
+    
+    parenthCount = 0 # this will keep track of consistencies.
+    parenthThreshold = 0
+    # gotta test to make sure it begins AND ends with parenthesis
+    if expression[0] != '(' or expression[-1] != ')':
+        print "Please write a fully parenthesized expression"
+        return invalid
+    for char in expression:
+        if char is '(':
+            parenthCount += 1
+        elif char is ')':
+            parenthCount -= 1
+        # after each char, check to make sure it isn't below 0
+        if parenthCount < parenthThreshold:
+            print "Please write a fully parenthesized expression"
+            return invalid
+    #after the whole expression is checked, balance should be 0.
+    if parenthCount != parenthThreshold:
+        print "Please write a fully parenthesized expression"
+        return invalid
+    else:
+        # this is one last failsafe to make sure it's compatible:
+        try:
+            eval(expression)
+        except:
+            # if eval fails, it's GG. return False.
+            print "Please write a fully parenthesized expression"
+            return invalid
+    # if all else works, THEN we can go ahead and test to make sure it complies
+    # to the formatting standard of (x+x).
+    
+        
+        
+        
+    return valid
+    
+
                         
     
+def numSeperator(expression):
+    # put everything into a list, so all other code is simpler.
+    expressList = []
+    newList = []
+    # used to create number from list 
+    numString = ''
+    i = 0
+    
+    
+    for char in expression:
+        expressList.append(char)
+    
+    # this loop will sort all the proper characters into the right order,
+    # so then we can check for the (x+x) format.
+    for i in range(len(expressList)):
+        if expressList[i].isdigit():
+            numString += expressList[i]
+        else:
+            if len(numString) != 0:
+                newList.append(int(numString))
+                numString = ''
+            newList.append(expressList[i])
+    # now that everything is in a list, we can easily iterate through it and
+    # change things.
+    return newList
+            
     
     
 '''                                                                                                                                                                     
@@ -305,6 +444,8 @@ def main():
     
     myStack = Stack()
     
+    debug(DEBUG, numSeperator('(1+22+444/1)'))    
+#    getInput()
     debug(DEBUG, myStack)
 
     
