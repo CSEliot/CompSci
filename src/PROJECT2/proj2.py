@@ -491,14 +491,18 @@ def evaluateInfix(expression):
     operand2 = 2
     evaluating = True
     
-    #THIS is a do-while loop. I understand breaks, and this is a valid situation
-    # to use it. While True, do till hit break. 
     while evaluating:
         i += 1
         char = expression[i]
+        # the ) parenthesis will tell us that it's time to
         if char is ')':
             # add the char ')' so it's legible to the eval() function
             evalStatement.insert(0, char)
+            # this is just a loop to do these 4 things, one after another.
+            # k will always be 0, then 1, then 2, etc.
+            # Once we find the  ')' char, we work backwards, topping the stack
+            # of it's members, looking at the top member of the stack without
+            # removing it. 
             for k in range(4):
                 # get rid of the (x+y) statement, and put it in a list to eval.
                 if k is operand1:
@@ -515,10 +519,10 @@ def evaluateInfix(expression):
                                                                   myStack.top())
 
                 # add the operations to the list to be eval()'ed
+                # THIS is where we remove the item, and add it to the list
+                # to be operated on.
                 evalStatement.insert(0, myStack.pop())
                 
-                # move i back to it's location just before the expression eval'd
-                #i = i - len(evalStatement)
             # check to see if the stack is empty. IF it is, then it will
             # receive the final answer below, so we should discontinue the loop   
             if myStack.isEmpty():
@@ -528,9 +532,14 @@ def evaluateInfix(expression):
             debug(DEBUG, ('evaluating: ', evalStatement))
             # this looks complicated, but what it does is map all characters
             # in the eval list to strings, then join them seperated by ""
-            # finally, sending that to eval for the final answer.
+            # finally, sending that to eval for the answer.
+            #example: list = a, b, c becomes string = abc
             resulting = eval(''.join(map(str, evalStatement)))
             print 'Pushing ', resulting, 'into the stack'
+            """So if our example problem was (1+(3*4)). The first time, this 
+            just found the ')' char after 4, then worked backwards to the '('
+            char. then it combined them into a string after removing them
+            from the stack, the (3*4) gets added back in as 12"""
             myStack.push(resulting)
             #clear the evalStatement for next run
             evalStatement = []
@@ -641,8 +650,6 @@ def evaluatePostfix(postfix):
                 
 def main():
     printgreeting()
-    
-    myStack = Stack()
     
     expression = getInput()
     evaluateInfix(expression)
