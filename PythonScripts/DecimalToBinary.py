@@ -1,5 +1,9 @@
 import sys, os
 
+#
+# THIS IS UNFINISHED!!!!
+#
+
 OG = input("Enter floating point number to fit in IEEE: ")
 if int(OG) > 2**22:
     print "TOO BIG"
@@ -13,7 +17,7 @@ OG = str(OG)
 if "-" in OG:
     isNeg = 1
 OG = OG.replace("-", "")
-
+OB
 
 c, u = str(OG).split(".")
 c = int(c)
@@ -65,7 +69,19 @@ print
 
 print "NORMALIZE & COUNT EXP"
 #add dot to right of leftest 1
+dotLoc = 0
+for i in range(len(finString)):
+    if finString[i] == "1":
+        finString = finString[:i+1] + "." + finString[o+1:]
+        dotLoc = i
+        break
+
 #count distance between dots. This is your exponent.
+exp = 0
+for i in range(len(finString)):
+    exp += 1
+    if finString[dotLoc + i + 1] == ".":
+        print "LOL"
 #if integral is 0, then negative exponent 
 #remove all zeros to the left of leftest 1
 #remove that one and both dots
